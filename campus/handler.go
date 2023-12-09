@@ -4,6 +4,7 @@ import (
 	"indonesia-University-API/databases"
 	"indonesia-University-API/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -23,12 +24,20 @@ func SetDatabase(databases *databases.DB) {
 
 func GetCampusID(c *gin.Context) {
 	var campus models.Campus
+	// var response ResponseCampus
 	id := c.Param("id")
-
-	result := db.Preload("Provinces").Where("campus_id = ?", id).First(&campus)
+	// check id is valid ?
+	if _, err := strconv.Atoi(id); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "id harus berupa angkas"})
+		return
+	}
+	result := db.Debug().Preload("Provinces").Where("campus_id = ?", id).First(&campus)
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+		return
 	}
+	// result.Scan(&response)
+	// c.JSON(http.StatusOK, gin.H{"data": response})
 	c.JSON(http.StatusOK, gin.H{"data": campus})
 }
 
