@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"indonesia-University-API/campus"
 	"indonesia-University-API/databases"
 	"log"
@@ -38,7 +37,6 @@ func main() {
 	api.GET("/campus", campus.GetIndexingCampus)
 
 	router.Run(":" + os.Getenv("PORT"))
-	fmt.Println("ge", os.Getenv("PORT"))
 }
 
 func init() {
