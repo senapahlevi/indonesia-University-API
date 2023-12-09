@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"indonesia-University-API/campus"
 	"indonesia-University-API/databases"
 	"log"
+	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -34,6 +37,15 @@ func main() {
 	api.GET("/campus/:id", campus.GetCampusID)
 	api.GET("/campus", campus.GetIndexingCampus)
 
-	router.Run(":8080")
+	router.Run(":" + os.Getenv("PORT"))
+	fmt.Println("ge", os.Getenv("PORT"))
+}
 
+func init() {
+
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 }
