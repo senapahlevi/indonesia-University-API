@@ -4,6 +4,7 @@ import (
 	"indonesia-University-API/campus"
 	"indonesia-University-API/databases"
 	"log"
+	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -35,8 +36,8 @@ func main() {
 	api.GET("/campus/:id", campus.GetCampusID)
 	api.GET("/campus", campus.GetIndexingCampus)
 
-	// router.Run(":" + os.Getenv("PORT"))
-	router.Run(":8080")
+	router.Run(":" + os.Getenv("PORT"))
+	// router.Run(":8080")
 }
 
 func init() {
