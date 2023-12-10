@@ -48,12 +48,12 @@ func GetIndexingCampus(c *gin.Context) {
 
 	campusName := c.Query("CampusName")
 	if campusName != "" {
-		search = db.Where("name LIKE ?", "%"+campusName+"%")
+		search = db.Preload("Provinces").Where("name LIKE ?", "%"+campusName+"%")
 	}
 
 	province := c.Query("province")
 	if province != "" {
-		search = db.Where("province LIKE ?", "%"+province+"%")
+		search = db.Preload("Provinces").Where("province LIKE ?", "%"+province+"%")
 	}
 
 	result := search.Find(&campus)
