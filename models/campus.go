@@ -5,6 +5,7 @@ type Campus struct {
 	Name       string     `gorm:"name" json:"name"`
 	Picture    string     `gorm:"picture" json:"-"`
 	ProvinceID int        `gorm:"province_id" json:"-"`
+	Address    string     `gorm:"address" json:"address"`
 	Provinces  []Province `gorm:"foreignKey:ProvinceID;references:province_id" json:"provinces"`
 }
 
