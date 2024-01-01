@@ -17,6 +17,13 @@ func main() {
 		log.Fatal(err)
 	}
 	campus.SetDatabase(db)
+	// db, err := databases.DatabaseRun()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// campusRepository := campus.NewRepository(db)
+	// campusService := campus.NewService()
 	router := gin.Default()
 	api := router.Group("/api")
 	api.Use(cors.New(cors.Config{

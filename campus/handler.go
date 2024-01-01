@@ -2,9 +2,8 @@ package campus
 
 import (
 	"indonesia-University-API/databases"
-	"indonesia-University-API/models"
+	"indonesia-University-API/service"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -22,42 +21,60 @@ func SetDatabase(databases *databases.DB) {
 // 	result := db.Preload("De")
 // }
 
+// func GetCampusID(c *gin.Context) {
+// 	var campus models.Campus
+// 	// var response ResponseCampus
+// 	id := c.Param("id")
+// 	// check id is valid ?
+// 	if _, err := strconv.Atoi(id); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "id harus berupa angkas"})
+// 		return
+// 	}
+// 	result := db.Debug().Preload("Provinces").Where("campus_id = ?", id).First(&campus)
+// 	if result.Error != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, gin.H{"data": campus})
+// }
+
 func GetCampusID(c *gin.Context) {
-	var campus models.Campus
+	// var campus models.Campus
 	// var response ResponseCampus
 	id := c.Param("id")
 	// check id is valid ?
-	if _, err := strconv.Atoi(id); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id harus berupa angkas"})
+	// campusID, err := strconv.Atoi(id)
+	campusID, err := service.ServiceStringToInteger(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID harus berupa angka"})
 		return
 	}
-	result := db.Debug().Preload("Provinces").Where("campus_id = ?", id).First(&campus)
-	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+	// campus, err := ServiceGetCampusID(campusID)
+	campus, err := service.ServiceGetCampusID(db, campusID)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// result.Scan(&response)
-	// c.JSON(http.StatusOK, gin.H{"data": response})
+
 	c.JSON(http.StatusOK, gin.H{"data": campus})
 }
 
 // indexing
 func GetIndexingCampus(c *gin.Context) {
-	var campus []models.Campus
-	var search *gorm.DB
 
 	campusName := c.Query("CampusName")
-	if campusName != "" {
-		search = db.Preload("Provinces").Where("name LIKE ?", "%"+campusName+"%")
-	}
 
 	province := c.Query("province")
-	if province != "" {
-		search = db.Preload("Provinces").Where("province LIKE ?", "%"+province+"%")
+
+	campus, err := service.ServiceGetIndex(db, campusName, province)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
 	}
 
-	result := search.Find(&campus)
-	if result.RowsAffected == 0 {
+	if len(campus) == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Data tidak ditemukan"})
 		return
 	}
